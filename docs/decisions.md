@@ -43,6 +43,27 @@ A short record of the main technical decisions in this project: what was decided
 **Why:** I already know PostgreSQL, and keeping documents, chunks, and vectors in one database makes joins and filtering simple. The data size of this project doesn't need a dedicated vector database.
 **Alternatives:** Pinecone (managed), Qdrant, Weaviate. Worth revisiting if the data grows a lot or advanced filtering and hybrid search become important.
 
+## HTTP client: axios
+**Date:** 2026-11-12
+**Status:** Implemented
+**Decision:** Use axios for frontend API calls, through a shared client in `frontend/src/api.ts`.
+**Why:** It throws on 4xx/5xx responses automatically, parses JSON for me, and a single instance keeps the base URL in one place.
+**Alternatives:** The built-in `fetch` (no dependency). Streaming responses in stage 3 may still need `fetch`, since reading a response stream is built into it.
+
+## Frontend state: Zustand
+**Date:** 2026-11-12
+**Status:** Implemented
+**Decision:** Use Zustand for client state (the chat history and whether a request is in flight), in `frontend/src/stores/`.
+**Why:** Several components need the same chat state. Zustand needs very little boilerplate and no Provider. I've used Redux and Valtio before; for an app this size, Redux Toolkit adds more structure than it needs.
+**Alternatives:** Redux Toolkit, Valtio, Jotai, React Context. Data that lives on the server (document list, processing status) may move to TanStack Query later, so the store only holds client state.
+
+## UI: shadcn/ui + Tailwind CSS
+**Date:** 2026-11-12
+**Status:** Implemented
+**Decision:** Build the UI with shadcn/ui (Radix base, Nova preset) on Tailwind CSS v4.
+**Why:** shadcn/ui copies component source into the repo, so every component can be read and changed. It's built on Radix, which handles keyboard and screen-reader accessibility. Tailwind keeps styles next to the markup.
+**Alternatives:** Material UI (complete, but hard to move away from the Material look), Ant Design (strong for admin dashboards, less suited to a chat-style app), Mantine.
+
 ## License: MIT
 **Date:** 2026-11-12
 **Status:** Implemented
