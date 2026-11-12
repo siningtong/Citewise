@@ -8,7 +8,11 @@ SYSTEM_PROMPT = (
 )
 
 # Created once and shared by every request.
-client = OpenAI(api_key=settings.openai_api_key.get_secret_value())
+# The SDK default read timeout is 10 minutes; a user won't wait that long.
+client = OpenAI(
+    api_key=settings.openai_api_key.get_secret_value(),
+    timeout=30.0,
+)
 
 
 def generate_answer(question: str) -> str:
