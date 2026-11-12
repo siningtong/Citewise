@@ -7,7 +7,7 @@ A document Q&A app that answers questions using only your documents, and cites t
 ## Tech stack
 
 - **Backend:** Python 3.11, FastAPI
-- **Frontend:** React + TypeScript (Vite) — coming soon
+- **Frontend:** React + TypeScript (Vite), Tailwind CSS, shadcn/ui, Zustand, axios
 - **LLM:** OpenAI — coming soon
 - **Database:** PostgreSQL + pgvector — coming soon
 
@@ -55,6 +55,41 @@ All backend commands run from the `backend/` directory.
 
    - Health check: http://localhost:8000/health
    - Interactive API docs: http://localhost:8000/docs
+
+### Frontend
+
+All frontend commands run from the `frontend/` directory. The backend must be running for the app to answer questions.
+
+1. Make sure you're on Node.js 24:
+
+   ```bash
+   node --version
+   ```
+
+2. Install dependencies (first time, and whenever `package.json` changes):
+
+   ```bash
+   cd frontend
+   npm install
+   ```
+
+3. Create a `.env` file in `frontend/` that tells the app where the backend is (first time only):
+
+   ```bash
+   VITE_API_URL=http://localhost:8000
+   ```
+
+   Restart the dev server after changing `.env`.
+
+4. Start the development server:
+
+   ```bash
+   npm run dev
+   ```
+
+5. Open http://localhost:5173 and ask a question.
+
+The backend only accepts browser requests from `http://localhost:5173` (CORS). If you run the frontend on a different port, update the allowed origins in `backend/app/main.py`.
 
 ## Design decisions
 
