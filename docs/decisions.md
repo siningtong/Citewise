@@ -43,6 +43,20 @@ A short record of the main technical decisions in this project: what was decided
 **Why:** Low cost for a personal project, and I have used OpenAI in production before. Comparing models with an eval set will turn the final model choice into a measured decision.
 **Alternatives:** Anthropic Claude and Google Gemini also have low-cost models. A local open-source embedding model would be free.
 
+## Reasoning effort: low
+**Date:** 2026-11-12
+**Status:** Implemented (to be re-checked with the eval set in stage 6)
+**Decision:** Call `gpt-5-nano` with reasoning effort `low` by default, configurable through `OPENAI_REASONING_EFFORT`.
+**Why:** Usage logging showed that most output tokens were hidden reasoning tokens, and a short answer took almost 10 seconds. One comparison on the same question:
+
+| Effort | Output tokens | Reasoning tokens | Latency |
+|---|---|---|---|
+| Not set | 1,213 | 960 | 9.8 s |
+| `low` | 140 | 64 | 2.9 s |
+
+With `low`, latency dropped about 3x and estimated cost per answer about 8x. This is a single sample, so the numbers will vary; answer quality still needs to be measured properly with the eval set in stage 6.
+**Alternatives:** Leave the model default (slower and more expensive). Try `minimal` for even lower latency. Streaming (stage 3) makes the wait feel shorter but doesn't reduce cost.
+
 ## Vector store: PostgreSQL + pgvector
 **Date:** 2026-11-12
 **Status:** Planned

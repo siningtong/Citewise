@@ -7,6 +7,12 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.llm import generate_answer
 from app.schemas import AskRequest, AskResponse
 
+# Show INFO logs from our own modules (e.g. OpenAI usage in app.llm).
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s %(levelname)s %(name)s: %(message)s",
+)
+
 logger = logging.getLogger(__name__)
 
 app = FastAPI(title="Citewise")
