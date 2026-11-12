@@ -22,6 +22,13 @@ A short record of the main technical decisions in this project: what was decided
 **Why:** One link and one README show the whole project. A feature that touches both sides lands in a single commit. CI and `docker-compose` live in one place.
 **Alternatives:** Separate repositories. That makes sense when different teams own each side or they release on different schedules, which isn't the case for a single-developer project.
 
+## Backend framework: FastAPI
+**Date:** 2026-11-12
+**Status:** Implemented
+**Decision:** Build the backend with FastAPI.
+**Why:** Request and response shapes are declared once as Pydantic models, and FastAPI validates every request against them (bad input gets a 422 before my code runs). The same models generate the OpenAPI docs at `/docs`, so the docs never drift from the code. The app will spend most of its time waiting on OpenAI and the database, and FastAPI supports `async` endpoints natively. I've used both FastAPI and Flask in production, and this combination makes FastAPI the better fit here.
+**Alternatives:** Flask is simpler and has a larger ecosystem of extensions, but validation and API docs need extra libraries, and async support is an add-on rather than the default. Django is more than this project needs.
+
 ## Node.js 24 LTS
 **Date:** 2026-11-12
 **Status:** Implemented
