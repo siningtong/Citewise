@@ -1,0 +1,24 @@
+# Python
+# Virtual environment (recreate with requirements.txt)
+.venv/
+# Bytecode cache
+__pycache__/
+*.pyc
+# Test cache
+.pytest_cache/
+
+# Node
+# Frontend dependencies (recreate with npm install)
+node_modules/
+# Frontend build output
+dist/
+
+# Secrets: API keys, database passwords. Never commit.
+.env
+
+# macOS
+.DS_Store
+
+# Editor settings
+.vscode/
+.idea/
