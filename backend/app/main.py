@@ -1,7 +1,19 @@
-from fastapi import FastAPI
+import logging
+
+import openai
+from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 
+from app.llm import generate_answer
 from app.schemas import AskRequest, AskResponse
+
+# Show INFO logs from our own modules (e.g. OpenAI usage in app.llm).
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s %(levelname)s %(name)s: %(message)s",
+)
+
+logger = logging.getLogger(__name__)
 
 app = FastAPI(title="Citewise")
 
@@ -25,5 +37,39 @@ def health():
 
 @app.post("/ask", response_model=AskResponse)
 def ask(request: AskRequest):
-    # Placeholder until the LLM is connected in stage 2.
-    return AskResponse(answer=f"You asked: {request.question}")
+    # Users get a short, generic message; the real cause goes to the server log.
+    # Order matters: subclasses (e.g. APITimeoutError) must come before their parents.
+    try:
+        answer = generate_answer(question=request.question)
+    except (openai.AuthenticationError, openai.PermissionDeniedError):
+        logger.exception("OpenAI rejected our credentials")
+        raise HTTPException(
+            status_code=500,
+            detail="The service is misconfigured. Please try again later.",
+        )
+    except openai.RateLimitError:
+        logger.exception("OpenAI rate limit or quota exceeded")
+        raise HTTPException(
+            status_code=503,
+            detail="The service is busy. Please try again in a moment.",
+        )
+    except openai.APITimeoutError:
+        logger.exception("OpenAI request timed out")
+        raise HTTPException(
+            status_code=504,
+            detail="The answer took too long. Please try again.",
+        )
+    except openai.APIConnectionError:
+        logger.exception("Could not connect to OpenAI")
+        raise HTTPException(
+            status_code=502,
+            detail="Could not reach the AI service. Please try again.",
+        )
+    except openai.APIError:
+        logger.exception("OpenAI request failed")
+        raise HTTPException(
+            status_code=502,
+            detail="The AI service returned an error. Please try again.",
+        )
+
+    return AskResponse(answer=answer)

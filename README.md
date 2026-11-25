@@ -8,7 +8,7 @@ A document Q&A app that answers questions using only your documents, and cites t
 
 - **Backend:** Python 3.11, FastAPI
 - **Frontend:** React + TypeScript (Vite), Tailwind CSS, shadcn/ui, Zustand, axios
-- **LLM:** OpenAI — coming soon
+- **LLM:** OpenAI (Responses API)
 - **Database:** PostgreSQL + pgvector — coming soon
 
 ## Local development
@@ -43,7 +43,24 @@ All backend commands run from the `backend/` directory.
    pip install -r requirements.txt
    ```
 
-4. Start the development server:
+4. Create a `.env` file in `backend/` with your OpenAI API key (first time only):
+
+   ```bash
+   OPENAI_API_KEY=sk-...
+   ```
+
+   Get a key at https://platform.openai.com/api-keys. Never commit this file; it's already in `.gitignore`.
+
+   Optional settings (the defaults are shown):
+
+   ```bash
+   OPENAI_MODEL=gpt-5-nano
+   OPENAI_REASONING_EFFORT=low
+   ```
+
+   `OPENAI_REASONING_EFFORT` must be one of `none`, `minimal`, `low`, `medium`, `high`, `xhigh`, `max`, and not every model supports every value. Variables set in your shell override the values in `.env`. Restart the server after changing `.env`.
+
+5. Start the development server:
 
    ```bash
    fastapi dev app/main.py
@@ -51,10 +68,12 @@ All backend commands run from the `backend/` directory.
 
    The server reloads automatically when you save a file. Stop it with `Ctrl + C`.
 
-5. Check that it works:
+6. Check that it works:
 
    - Health check: http://localhost:8000/health
-   - Interactive API docs: http://localhost:8000/docs
+   - Interactive API docs: http://localhost:8000/docs (try `POST /ask`)
+
+   Each OpenAI call logs its model, token usage, and latency to the terminal. Questions and answers are never logged.
 
 ### Frontend
 
