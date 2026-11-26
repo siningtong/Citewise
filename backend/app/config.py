@@ -9,6 +9,7 @@ class Settings(BaseSettings):
 
     # SecretStr hides the value when printed or logged.
     openai_api_key: SecretStr
+    openai_base_url: str | None = None
     openai_model: str = "gpt-5-nano"
     # How much the model "thinks" before answering. Lower is faster and cheaper,
     # but may lower answer quality. Not every model supports every value.
