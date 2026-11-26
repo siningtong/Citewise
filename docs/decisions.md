@@ -90,3 +90,10 @@ With `low`, latency dropped about 3x and estimated cost per answer about 8x. Thi
 **Status:** Implemented
 **Decision:** Publish the project under the MIT License.
 **Why:** It's a public portfolio project. MIT lets others read and reuse the code as long as they keep the attribution.
+
+## Dev dependencies: requirements-dev.txt
+**Date:** 2026-11-24
+**Status:** Implemented
+**Decision:** Keep runtime dependencies in `backend/requirements.txt` and development-only tools (ruff now, pytest later) in `backend/requirements-dev.txt`, which includes the runtime file with `-r requirements.txt`.
+**Why:** The production image only needs what the app runs with. Dev tools would make it bigger and add packages that are never used there. Local development and CI install `requirements-dev.txt` to get both.
+**Alternatives:** One `requirements.txt` with everything (simpler, but ships dev tools to production), or `pyproject.toml` with optional dependency groups (worth it if the backend becomes an installable package).
